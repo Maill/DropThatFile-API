@@ -1,0 +1,26 @@
+{
+  "name": "dropthatfile-api",
+  "version": "1.0.0",
+  "description": "Service de liason de données DropThatFile",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Maill/DropThatFile-API.git"
+  },
+  "author": "Cornu Nicolas - Lefebvre Olivier",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Maill/DropThatFile-API/issues"
+  },
+  "homepage": "https://github.com/Maill/DropThatFile-API#readme",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "mysql": "^2.13.0",
+    "sequelize": "^3.30.4",
+    "sequelize-mysql": "^1.7.0"
+  }
+}
