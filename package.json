@@ -18,8 +18,10 @@
   "homepage": "https://github.com/Maill/DropThatFile-API#readme",
   "dependencies": {
     "body-parser": "^1.17.1",
+    "chilkat_node7_win32": "^9.50.66",
     "express": "^4.15.2",
     "mysql": "^2.13.0",
+    "node-rsa": "^0.4.2",
     "sequelize": "^3.30.4",
     "sequelize-mysql": "^1.7.0"
   }

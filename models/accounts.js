@@ -32,6 +32,10 @@ module.exports = function(sequelize, DataTypes) {
     idToken: {
       type: DataTypes.STRING(512),
       allowNull: false
+    },
+    updateAt: {
+      type: DataTypes.DATE,
+      allowNull: false
     }
   }, {
     tableName: 'accounts'

@@ -5,7 +5,7 @@ var express = require('express');
 var router  = express.Router();
 
 //Permet d'obtenir un UUID servant de token de connexion 
-router.get('/getGUID', function(req, res){
+/*router.get('/getGUID', function(req, res){
     models.sequelize.query("SELECT UUID()").then(function(data){
         res.setHeader("Content-Type", "application/json");
         var json = JSON.stringify({
@@ -13,7 +13,7 @@ router.get('/getGUID', function(req, res){
         }, null, 3)
         res.send(json);
     })
-})
+})*/
 
 //Permet d'obtenir la clé publique RSA 2048 bit du serveur
 router.get('/getServerPublicKey', function(req, res){

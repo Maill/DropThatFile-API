@@ -2,7 +2,9 @@
 var express = require('express')
 var bodyParser = require('body-parser');
 var http = require("http");
-
+var fs = require('fs');
+var RSAKeys = require('./keys.js');
+var NodeRSA = require('node-rsa');
 var app = express()
 
 //MiddleWares
@@ -10,13 +12,14 @@ app.set('json spaces', 3);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+
 //Définition des routes
 var accounts = require ('./routes/accounts')
 var files = require('./routes/files');
 var groups = require('./routes/groups');
 var configuration = require('./routes/configuration');
 
-//app.use('/accounts', accounts);
+app.use('/accounts', accounts);
 //app.use('/files', files);
 //app.use('/groups', groups);
 app.use('/configuration', configuration);
@@ -32,5 +35,10 @@ app.get('/', function (req, res) {
 
 //
 app.listen(3000, function () {
-  console.log('Example app listening on port 3000!')
+  console.log('Example app listening on port 3000!');
+  var test = new RSAKeys();
+  var encrypted = test.crypt("Je veux aller jouer a Rocket League.")
+  console.log("Crypté : " + encrypted);
+  var decrypted = test.decrypt(encrypted);
+  console.log("Décrypté : " + decrypted);
 })
