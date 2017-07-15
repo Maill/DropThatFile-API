@@ -1,29 +1,33 @@
 'use strict';
 
 var models  = require('../models');
+var MembersOf = models.membersof;
+var Accounts = models.accounts;
+var Groups = models.groups;
 var express = require('express');
 var router  = express.Router();
 
 router.get('/getUserGroups', function(req, res){
-    models.membersof.findAll({
+    Accounts.findAll({
+        attributes: [],
         where : {
-            id_account: 1,
+            id: 1,
         },
         include : [{
-            model: models.groups,
-            as: "memberof"
-        }],
-        raw: true,
-    }).then(function(result){
-        if(result){
-            console.log(result)
-        } else {
-            res.send(JSON.stringify({
+            model: Groups,
+            as: 'memberof'
+        }]
+    }).then(result => {
+        res.json(result);
+    }).catch(function (err) {
+        if (err) {
+            res.json({
                 success: "false",
                 message: "Error while retrieving groups for user."
-            }))
+            });
+            throw err;
         }
-    })
+    });
 });
 
 module.exports = router;
