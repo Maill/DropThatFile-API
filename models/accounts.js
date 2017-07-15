@@ -22,18 +22,14 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     password: {
-      type: DataTypes.STRING(512),
+      type: DataTypes.STRING(2048),
       allowNull: false
     },
     lastLogin: {
       type: DataTypes.DATE,
       allowNull: true
     },
-    idToken: {
-      type: DataTypes.STRING(512),
-      allowNull: false
-    },
-    updateAt: {
+    updatedAt: {
       type: DataTypes.DATE,
       allowNull: false
     }

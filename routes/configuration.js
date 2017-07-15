@@ -1,6 +1,7 @@
 'use strict';
 
 var models  = require('../models');
+var RSAKeys = require('../keys');
 var express = require('express');
 var router  = express.Router();
 
@@ -16,19 +17,12 @@ var router  = express.Router();
 })*/
 
 //Permet d'obtenir la clé publique RSA 2048 bit du serveur
-router.get('/getServerPublicKey', function(req, res){
-    models.configuration.find({
-        attributes: ["server_public_key"],
-        where: {
-            id: 1
-        }
-    }).then(function(data){
-        res.setHeader("Content-Type", "application/json");
-        var json = JSON.stringify({
-            server_public_key: data["server_public_key"]
-        }, null, 3)
-        res.send(json);
-    })
+router.post('/getServerPublicKey', function(req, res){
+    var keys = new RSAKeys();
+    res.setHeader("Content-Type", "application/json");
+    res.json({
+        server_public_key: keys.getPublicKey()
+    });
 })
 
 module.exports = router;

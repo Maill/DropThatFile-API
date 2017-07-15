@@ -3,7 +3,7 @@
 
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('childof', {
-    id_account: {
+    id_groups_mother: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
@@ -12,7 +12,7 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
-    id_groups: {
+    id_groups_child: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,

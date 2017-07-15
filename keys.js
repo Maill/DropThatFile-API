@@ -4,19 +4,30 @@ var fs = require('fs');
 var NodeRSA = require('node-rsa');
 var crypto = require('crypto');
 
-function RSAkeys(){
+function RSAKeys(){
      this.RSAObject = initKeys();
 }
 
-RSAkeys.prototype.crypt = function(message){
+RSAKeys.prototype.crypt = function(message){
     return this.RSAObject.encrypt(message, "base64").toString();
 };
 
-RSAkeys.prototype.decrypt = function(cryptedmessage){
-    return this.RSAObject.decrypt(cryptedmessage);
+RSAKeys.prototype.decrypt = function(cryptedmessage){
+    return this.RSAObject.decrypt(cryptedmessage).toString();
 };
 
-module.exports = RSAkeys;
+RSAKeys.prototype.getPublicKey = function(){
+    var publicDer = this.RSAObject.exportKey('public');
+    return publicDer.replace(/-----BEGIN PUBLIC KEY-----/, '').replace(/-----END PUBLIC KEY-----/, '').replace(/\n/g, '');
+};
+
+RSAKeys.prototype.getPrivateKey = function(){
+    var privateDer = this.RSAObject.exportKey('private');
+    //return publicDer.replace(/-----BEGIN PRIVATE KEY-----/, '').replace(/-----END PRIVATE KEY-----/, '').replace(/\n/g, '');
+    return privateDer
+};
+
+module.exports = RSAKeys;
 // Méthode privées
 
 function initKeys(){
