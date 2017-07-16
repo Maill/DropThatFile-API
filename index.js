@@ -8,6 +8,8 @@ var RSAKeys = require('./keys.js');
 var NodeRSA = require('node-rsa');
 var app = express();
 
+
+
 // Relations
 var models = require('./models');
 var MembersOf = models.membersof;
@@ -21,7 +23,6 @@ Accounts.belongsToMany(Groups, {
   otherKey: 'id_group',
   as: 'memberof'
 });
-
 
 //Objets
 var RSAOperation = new RSAKeys();
@@ -60,7 +61,7 @@ app.use(function (req, res, next) {
 });
 
 app.use('/accounts', accounts);
-//app.use('/files', files);
+app.use('/files', files);
 app.use('/groups', groups);
 app.use('/configuration', configuration);
 

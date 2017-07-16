@@ -14,11 +14,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     private_key: {
-      type: DataTypes.STRING(512),
+      type: DataTypes.STRING(2048),
       allowNull: false
     },
     public_key: {
-      type: DataTypes.STRING(512),
+      type: DataTypes.STRING(2048),
       allowNull: false
     }
   }, {

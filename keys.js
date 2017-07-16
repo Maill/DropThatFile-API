@@ -36,14 +36,13 @@ function initKeys(){
     //Objects
     var keys;
 
-    Strpriv = fs.readFileSync('./configuration/private.pem', (err, data) => {
-        if(err) throw err;
-    }).toString().trim();
+    Strpriv = fs.readFileSync('./configuration/private.pem').toString().trim();
 
     if(Strpriv.length == 0){
         keys = new NodeRSA({b: 2048});
         keys.generateKeyPair();
         var Strpriv = keys.exportKey('private');
+        writeKeysInFile(Strpriv);
     } else {
         keys = new NodeRSA({b: 2048});
         keys.importKey(Strpriv, 'pkcs1');
@@ -51,8 +50,6 @@ function initKeys(){
     return keys;
 }
 
-function writeKeysInFile(pub, priv){
-    fs.writeFileSync('./configuration/private.pem', priv, function(err){
-        if(err) throw err;
-    });
+function writeKeysInFile(priv){
+    fs.writeFileSync('./configuration/private.pem', priv);
 }
