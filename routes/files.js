@@ -1,18 +1,65 @@
 'use strict';
 
 var models  = require('../models');
+var Accounts = models.accounts;
+var Groups = models.groups;
+var Files = models.files;
+var FilesOfAccount = models.filesofaccount;
+var FilesOfGroup = models.filesofgroup;
 var express = require('express');
 var router  = express.Router();
+var jwt = require('jsonwebtoken');
+var RSAKeys = require('../keys');
+
+var decryptor = new RSAKeys();
+decryptor.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
 
 router.post('/getFilesOfUser', function(req, res){
-    //recupère tout les fichier de l'utilisateur
-    //avoir comme données a la fin {userfiles:[{donnes_file, donnes_file}]}
+    Accounts.findAll({
+        attributes: [],
+        where : {
+            id: jwt.verify(req.get('Authorization'), new RSAKeys().getPrivateKey()).identityUser
+        },
+        include : [{
+            model: Files,
+            as: 'userfiles',
+            attributes: ['id', 'name', 'password', 'created', 'description']
+        }]
+    }).then(result => {
+        res.json({result});
+    }).catch(function (err) {
+        if (err) {
+            res.json({
+                success: "false",
+                message: "Error while retrieving files for user."
+            });
+            throw err;
+        }
+    });
 })
 
 router.post('/getFilesOfGroup', function(req, res){
-    //recupère tout les fichier d'un groupe pour une liste de groupe donné
-    //detail de la donnée du post : 2;3;5;7 <= id des groupes
-    //avoir comme données a la fin {2:[{donnes_file, donnes_file}], 3:[{donnes_file, donnes_file}], etc...}
+    Groups.findAll({
+        attributes: ['id'],
+        where : {
+            id: decryptor.decrypt(req.body.groupsList)
+        },
+        include : [{
+            model: Files,
+            as: 'groupfiles',
+            attributes: ['id', 'name', 'password', 'created', 'description']
+        }]
+    }).then(result => {
+        res.json({result});
+    }).catch(function (err) {
+        if (err) {
+            res.json({
+                success: "false",
+                message: "Error while retrieving files for group."
+            });
+            throw err;
+        }
+    });
 })
 
 

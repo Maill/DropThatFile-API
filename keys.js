@@ -28,7 +28,7 @@ RSAKeys.prototype.getPrivateKey = function(){
 };
 
 module.exports = RSAKeys;
-// Méthode privées
+// Méthode privéess
 
 function initKeys(){
     //From file

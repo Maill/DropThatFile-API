@@ -8,20 +8,34 @@ var RSAKeys = require('./keys.js');
 var NodeRSA = require('node-rsa');
 var app = express();
 
-
-
 // Relations
 var models = require('./models');
 var MembersOf = models.membersof;
 var Accounts = models.accounts;
 var Groups = models.groups;
+var Files = models.files;
+var FilesOfAccount = models.filesofaccount;
+var FilesOfGroup = models.filesofgroup;
 
-//membersof.belongsTo(groups);
 Accounts.belongsToMany(Groups, {
   through: MembersOf,
   foreignKey: 'id_account',
   otherKey: 'id_group',
   as: 'memberof'
+});
+
+Accounts.belongsToMany(Files, {
+  through: FilesOfAccount,
+  foreignKey: 'id_account',
+  otherKey: 'id_files',
+  as: 'userfiles'
+});
+
+Groups.belongsToMany(Files, {
+  through: FilesOfGroup,
+  foreignKey: 'id_group',
+  otherKey: 'id_files',
+  as: 'groupfiles'
 });
 
 //Objets
