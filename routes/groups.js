@@ -6,19 +6,22 @@ var Accounts = models.accounts;
 var Groups = models.groups;
 var express = require('express');
 var router  = express.Router();
+var jwt = require('jsonwebtoken');
+var RSAKeys = require('../keys');
 
-router.get('/getUserGroups', function(req, res){
+router.post('/getUserGroups', function(req, res){
     Accounts.findAll({
         attributes: [],
         where : {
-            id: 1,
+            id: jwt.verify(req.get('Authorization'), new RSAKeys().getPrivateKey()).identityUser
         },
         include : [{
             model: Groups,
-            as: 'memberof'
+            as: 'memberof',
+            attributes: ['id', 'name', 'public_key', 'createdAt', 'updatedAt']
         }]
     }).then(result => {
-        res.json(result);
+        res.json({result});
     }).catch(function (err) {
         if (err) {
             res.json({
@@ -29,5 +32,10 @@ router.get('/getUserGroups', function(req, res){
         }
     });
 });
+
+router.post('/getPasswordForFile', function(req, res){
+    
+});
+
 
 module.exports = router;
