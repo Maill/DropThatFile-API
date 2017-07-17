@@ -8,7 +8,7 @@ function RSAKeys(){
      this.RSAObject = initKeys();
 }
 
-RSAKeys.prototype.crypt = function(message){
+RSAKeys.prototype.encrypt = function(message){
     return this.RSAObject.encrypt(message, "base64").toString();
 };
 
@@ -21,14 +21,17 @@ RSAKeys.prototype.getPublicKey = function(){
     return publicDer.replace(/-----BEGIN PUBLIC KEY-----/, '').replace(/-----END PUBLIC KEY-----/, '').replace(/\n/g, '');
 };
 
-RSAKeys.prototype.getPrivateKey = function(){
+RSAKeys.prototype.getPrivateKeyDer = function(){
     var privateDer = this.RSAObject.exportKey('private');
-    //return publicDer.replace(/-----BEGIN PRIVATE KEY-----/, '').replace(/-----END PRIVATE KEY-----/, '').replace(/\n/g, '');
     return privateDer
 };
 
+RSAKeys.prototype.getPrivateKey = function(){
+    var privateDer = this.RSAObject.exportKey('private');
+    return privateDer.replace(/-----BEGIN PRIVATE KEY-----/, '').replace(/-----END PRIVATE KEY-----/, '').replace(/\n/g, '');
+};
 module.exports = RSAKeys;
-// Méthode privéess
+// Méthodes privées
 
 function initKeys(){
     //From file

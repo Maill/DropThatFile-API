@@ -21,21 +21,24 @@ Accounts.belongsToMany(Groups, {
   through: MembersOf,
   foreignKey: 'id_account',
   otherKey: 'id_group',
-  as: 'memberof'
+  as: 'memberof',
+  onDelete: 'CASCADE'
 });
 
 Accounts.belongsToMany(Files, {
   through: FilesOfAccount,
   foreignKey: 'id_account',
   otherKey: 'id_files',
-  as: 'userfiles'
+  as: 'userfiles',
+  onDelete: 'CASCADE'
 });
 
 Groups.belongsToMany(Files, {
   through: FilesOfGroup,
   foreignKey: 'id_group',
   otherKey: 'id_files',
-  as: 'groupfiles'
+  as: 'groupfiles',
+  onDelete: 'CASCADE'
 });
 
 //Objets
@@ -62,14 +65,14 @@ app.use(function (req, res, next) {
     next();
   } else {
     var token = req.get('Authorization');
-    var key = RSAOperation.getPrivateKey();
+    var key = RSAOperation.getPrivateKeyDer();
     try {
       var decoded = jwt.verify(token, key);
       next();
     } catch (err) {
-      res.send(JSON.stringify({
+      res.json({
         message: "Invalid token."
-      }, null, 3));
+      }, null, 3);
     }
   }
 });

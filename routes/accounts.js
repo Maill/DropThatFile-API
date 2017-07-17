@@ -1,16 +1,20 @@
 'use strict';
 
 var models  = require('../models');
+var Accounts = models.accounts;
+var Groups = models.accounts;
+var FilesOfAccount = models.filesofaccount;
 var express = require('express');
+var router  = express.Router();
 var RSAKeys = require('../keys');
 var jwt = require('jsonwebtoken');
-var router  = express.Router();
+
 
 router.post('/login', function(req, res){
-    var decryptor = new RSAKeys();
+    let decryptor = new RSAKeys();
     decryptor.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
-    var jsonObjectLogin = JSON.parse(decryptor.decrypt(req.body.credentials));
-    models.accounts.find({
+    let jsonObjectLogin = JSON.parse(decryptor.decrypt(req.body.credentials));
+    Accounts.find({
         where : {
             mail: jsonObjectLogin.email,
         }
@@ -18,13 +22,13 @@ router.post('/login', function(req, res){
         if(result){
             if(result.password){
                 if(decryptor.decrypt(result.password) != jsonObjectLogin.password){
-                    res.send(JSON.stringify({
+                    res.json({
                         success: "false",
-                        message: "Error while authenticating. Maybe wrong account or password."
-                    }))
+                        message: "Error while authenticating. Maybe wrong credentials."
+                    })
                 } else {
-                    var token = createToken(decryptor.getPrivateKey(), result.id);
-                    var user = JSON.stringify({
+                    let token = createToken(decryptor.getPrivateKeyDer(), result.id);
+                    let user = JSON.stringify({
                         id: result.id,
                         fname: result.fname,
                         lname: result.lname,
@@ -40,10 +44,74 @@ router.post('/login', function(req, res){
         } else {
             res.send(JSON.stringify({
                 success: "false",
-                message: "Error while authenticating. Maybe wrong account or password."
+                message: "Error while authenticating. Maybe wrong credentials."
             }))
         }
     })
+});
+
+router.post('/addAccount', function(req, res){
+    let rsaKey = new RSAKeys();
+    rsaKey.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
+    let jsonObjectAddAccount = JSON.parse(rsaKey.decrypt(req.body.dataUser));
+    
+    let fname = jsonObjectAddAccount.fname;
+    let lname = jsonObjectAddAccount.lname;
+    let mail = jsonObjectAddAccount.mail;
+    let password = rsaKey.encrypt(jsonObjectAddAccount.password)
+    let lastlogin = jsonObjectAddAccount.lastlogin;
+    let dateNow = new Date().getTime();
+    Accounts.upsert({
+        fname: fname,
+        lname: lname,
+        mail: mail,
+        password: password,
+        lastLogin: lastlogin,
+        updatedAt: dateNow,
+        createdAt: dateNow
+    }).then(function (result) {
+        res.json({
+            success: true,
+            message: "The account has been successfully created or updated if he already exists."
+        });
+    }).catch(function (err) {
+        if (err) {
+            res.json({
+                success: false,
+                message: "Unhandled error while creating the account."
+            });
+            throw err;
+        }
+    });
+})
+
+/**
+ * Delete an account via its email
+ */
+router.post("/deleteAccount", function (req, res) {
+    let rsaKey = new RSAKeys();
+    rsaKey.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
+    let jsonObjectDeleteAccount = JSON.parse(rsaKey.decrypt(req.body.dataUser));
+    let email = jsonObjectDeleteAccount.mail
+    Accounts.destroy({
+        where:
+        {
+            mail: email
+        }
+    }).then(function (result) {
+        res.json({
+            success: true,
+            message: "Account successfully deleted."
+        });
+    }).catch(function (err) {
+        if (err) {
+            res.json({
+                success: false,
+                message: "Unhandled error while deleting the account."
+            });
+            throw err;
+        }
+    });
 });
 
 module.exports = router;
