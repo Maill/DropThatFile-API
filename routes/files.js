@@ -62,12 +62,10 @@ router.post('/getFilesOfGroups', function(req, res){
 })
 
 router.post('/accounts/addFile', function(req, res){
-    let rsaKeys1 = new RSAKeys();
-    let rsaKeys2 = new RSAKeys();
-    rsaKeys1.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
-    rsaKeys2.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
+    let decryptor = new RSAKeys();
+    decryptor.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
     
-    let jsonObjectAddFile = JSON.parse(rsaKeys1.decrypt(req.body.dataFile));
+    let jsonObjectAddFile = JSON.parse(decryptor.decrypt(req.body.dataFile));
     let filePassword = req.body.passwordFile;
     let name = jsonObjectAddFile.name;
     let description = jsonObjectAddFile.description;
@@ -125,13 +123,11 @@ router.post('/accounts/addFile', function(req, res){
 })
 
 router.post('/groups/addFile', function(req, res){
-    let rsaKeys1 = new RSAKeys();
-    let rsaKeys2 = new RSAKeys();
-    rsaKeys1.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
-    rsaKeys2.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
+    let decryptor = new RSAKeys();
+    decryptor.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
     
-    let jsonObjectAddFile = JSON.parse(rsaKeys1.decrypt(req.body.dataFile));
-    let jsonObjectGroupName = JSON.parse(rsaKeys2.decrypt(req.body.dataGroup));
+    let jsonObjectAddFile = JSON.parse(decryptor.decrypt(req.body.dataFile));
+    let jsonObjectGroupName = JSON.parse(decryptor.decrypt(req.body.dataGroup));
     let filePassword = req.body.passwordFile;
     let fileName = jsonObjectAddFile.name;
     let description = jsonObjectAddFile.description;

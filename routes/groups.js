@@ -14,11 +14,11 @@ router.post('/getUserGroups', function(req, res){
     Accounts.findAll({
         attributes: [],
         where : {
-            id: jwt.verify(req.get('Authorization'), new RSAKeys().getPrivateKey()).identityUser
+            id: jwt.verify(req.get('Authorization'), new RSAKeys().getPrivateKeyDer()).identityUser
         },
         include : [{
             model: Groups,
-            as: 'memberOf',
+            as: 'memberof',
             attributes: ['id', 'name', 'public_key', 'createdAt', 'updatedAt']
         }]
     }).then(result => {
