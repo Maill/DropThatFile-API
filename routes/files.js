@@ -11,6 +11,7 @@ var router  = express.Router();
 var jwt = require('jsonwebtoken');
 var RSAKeys = require('../keys');
 
+// Récupération des données des fichiers de l'utilisateur
 router.post('/getFilesOfUser', function(req, res){
     Accounts.findAll({
         attributes: [],
@@ -35,6 +36,7 @@ router.post('/getFilesOfUser', function(req, res){
     });
 })
 
+// Récupération des données des fichiers du groupe
 router.post('/getFilesOfGroups', function(req, res){
     let rsaKeys = new RSAKeys();
     rsaKeys.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
@@ -61,14 +63,17 @@ router.post('/getFilesOfGroups', function(req, res){
     });
 })
 
+// Ajout d'un fichier utilisateur
 router.post('/accounts/addFile', function(req, res){
     let decryptor = new RSAKeys();
     decryptor.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
-    
-    let jsonObjectAddFile = JSON.parse(decryptor.decrypt(req.body.dataFile));
+    let jsonObjectAddFile = JSON.parse(decryptor.decrypt(req.body.dataFile).replace(/\[+/g, '').replace(/\]+/g, ''));
+    console.log(jsonObjectAddFile);
     let filePassword = req.body.passwordFile;
     let name = jsonObjectAddFile.name;
+    console.log(name);
     let description = jsonObjectAddFile.description;
+    console.log(description);
     let dateNow = new Date().toISOString().slice(0, 19).replace('T', ' '); // Convert Date format to MySQL Datetime format
     Files.upsert({
         name: name,
@@ -122,6 +127,7 @@ router.post('/accounts/addFile', function(req, res){
     });
 })
 
+// Ajout d'un fichier groupe
 router.post('/groups/addFile', function(req, res){
     let decryptor = new RSAKeys();
     decryptor.RSAObject.setOptions({encryptionScheme: 'pkcs1'});

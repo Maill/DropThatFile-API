@@ -29,6 +29,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: true
     },
+    isadmin: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false
+    },
     updatedAt: {
       type: DataTypes.DATE,
       allowNull: false

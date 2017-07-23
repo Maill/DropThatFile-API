@@ -9,7 +9,7 @@ var router  = express.Router();
 var RSAKeys = require('../keys');
 var jwt = require('jsonwebtoken');
 
-
+// route de connexion
 router.post('/login', function(req, res){
     let decryptor = new RSAKeys();
     decryptor.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
@@ -33,7 +33,8 @@ router.post('/login', function(req, res){
                         fname: result.fname,
                         lname: result.lname,
                         mail: result.mail,
-                        lastlogin: result.lastLogin
+                        lastlogin: result.lastLogin,
+                        isadmin: result.isadmin
                     })
                     res.json({
                         token: token,
@@ -50,6 +51,7 @@ router.post('/login', function(req, res){
     })
 });
 
+// ajout d'un compte
 router.post('/addAccount', function(req, res){
     let rsaKey = new RSAKeys();
     rsaKey.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
@@ -59,16 +61,14 @@ router.post('/addAccount', function(req, res){
     let lname = jsonObjectAddAccount.lname;
     let mail = jsonObjectAddAccount.mail;
     let password = rsaKey.encrypt(jsonObjectAddAccount.password)
-    let lastlogin = jsonObjectAddAccount.lastlogin;
     let dateNow = new Date().getTime();
     Accounts.upsert({
         fname: fname,
         lname: lname,
         mail: mail,
         password: password,
-        lastLogin: lastlogin,
-        updatedAt: dateNow,
-        createdAt: dateNow
+        createdAt: dateNow,
+        updatedAt: dateNow
     }).then(function (result) {
         res.json({
             success: true,
@@ -116,6 +116,7 @@ router.post("/deleteAccount", function (req, res) {
 
 module.exports = router;
 
+// création du token de connexion
 function createToken(privateKey, idUser){
     var token = jwt.sign({ identityUser: idUser }, privateKey, { expiresIn: '12h' });
     return token;

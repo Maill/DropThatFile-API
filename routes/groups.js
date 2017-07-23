@@ -10,6 +10,7 @@ var jwt = require('jsonwebtoken');
 var RSAKeys = require('../keys');
 var NodeRSA = require('node-rsa');
 
+// Récupération des groupes de l'utilisateur
 router.post('/getUserGroups', function(req, res){
     Accounts.findAll({
         attributes: [],
@@ -34,6 +35,7 @@ router.post('/getUserGroups', function(req, res){
     });
 });
 
+// Récupère le mot de passe pour ouvrir une archive de groupe
 router.post('/getPasswordForFile', function(req, res){
     Groups.findAll({
         attributes: ['id'],
@@ -58,6 +60,7 @@ router.post('/getPasswordForFile', function(req, res){
     });
 });
 
+// Crée un groupe
 router.post('/addGroup', function(req, res){
     let keys = new NodeRSA({b: 2048});
     let rsaKey = new RSAKeys();

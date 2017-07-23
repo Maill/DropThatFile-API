@@ -21,6 +21,11 @@ RSAKeys.prototype.getPublicKey = function(){
     return publicDer.replace(/-----BEGIN PUBLIC KEY-----/, '').replace(/-----END PUBLIC KEY-----/, '').replace(/\n/g, '');
 };
 
+RSAKeys.prototype.getPublicKeyDer = function(){
+    var publicDer = this.RSAObject.exportKey('public');
+    return publicDer;
+};
+
 RSAKeys.prototype.getPrivateKeyDer = function(){
     var privateDer = this.RSAObject.exportKey('private');
     return privateDer

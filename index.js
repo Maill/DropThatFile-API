@@ -63,6 +63,8 @@ app.use(function (req, res, next) {
     next();
   } else if(req.path.includes('accounts/login')) {
     next();
+  } else if(req.path.includes('/')){
+    next();
   } else {
     var token = req.get('Authorization');
     var key = RSAOperation.getPrivateKeyDer();
