@@ -63,12 +63,7 @@ router.post('/getFilesOfGroups', function(req, res){
     });
 })
 
-<<<<<<< HEAD
-// Ajout d'un fichier utilisateur
-router.post('/accounts/addFile', function(req, res){
-=======
 router.post('/accounts/addArchive', function(req, res){
->>>>>>> 3077f7a7c7d010b99e11421791b839521c9da62c
     let decryptor = new RSAKeys();
     decryptor.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
     let jsonObjectAddFile = JSON.parse(decryptor.decrypt(req.body.dataFile).replace(/\[+/g, '').replace(/\]+/g, ''));
@@ -193,12 +188,7 @@ router.post('/accounts/addFile', function(req, res){
     });
 })
 
-<<<<<<< HEAD
-// Ajout d'un fichier groupe
-router.post('/groups/addFile', function(req, res){
-=======
 router.post('/groups/addArchive', function(req, res){
->>>>>>> 3077f7a7c7d010b99e11421791b839521c9da62c
     let decryptor = new RSAKeys();
     decryptor.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
     

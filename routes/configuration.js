@@ -39,7 +39,7 @@ router.post('/deleteFTPFolder', function(req, res){
 router.post('/getFTPCrendentials', function(req, res){
     var keys = new NodeRSA({b: 2048});
     keys.setOptions({encryptionScheme: 'pkcs1'});
-    keys.importKey('-----BEGIN PUBLIC KEY----- MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApMlCIC7KlA1yGuYq5wVrJzsy+yDkqdQov8TM0DfBGJEK9xqxdXO8Gb2rHuotLkzx0f1bGWNQj5ZuRp6PqusT5dYUCvlEn9LxwXVWhfnP5gJq+Ews8uASwugN+6hLAkY01qFF+MMkLQeDpaddyiHoBYji4ci5aMKJrkjEy2i6eTqRd6lesPScz9UEwc4XJLoYyU8Qe37X9SeF4p1qFmUax3FSK4Kp+lz48phpM7y1VTWuzZ017yI4gvzjBLOtdiLem+aV28+JvYPJC1MLvxt+WADbo9sxfjvdpa7W+p77f7o07DKTlH+AjjilSjIOzxYoD/QkbspqaeVL7VHx5Gb+kwIDAQAB -----END PUBLIC KEY-----', 'public');
+    keys.importKey(req.body.clientPubKey, 'public');
     res.json({
         ftpcredentials: keys.encrypt(fs.readFileSync('./configuration/ftp.json').toString().trim(), "base64")
     })
