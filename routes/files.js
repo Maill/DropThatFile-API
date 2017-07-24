@@ -62,10 +62,10 @@ router.post('/getFilesOfGroups', function(req, res){
 })
 
 router.post('/accounts/addArchive', function(req, res){
-    let jsonObjectAddFile = JSON.parse(RSAKeys.decrypt(req.body.dataFile).replace(/\[+/g, '').replace(/\]+/g, ''));
+    let jsonObjectAddArchive = JSON.parse(RSAKeys.decrypt(req.body.dataFile).replace(/\[+/g, '').replace(/\]+/g, ''));
     let filePassword = req.body.passwordFile;
-    let name = jsonObjectAddFile.name;
-    let description = jsonObjectAddFile.description;
+    let name = jsonObjectAddArchive.name;
+    let description = jsonObjectAddArchive.description;
     let dateNow = new Date().toISOString().slice(0, 19).replace('T', ' '); // Convert Date format to MySQL Datetime format
     Files.upsert({
         name: name,
@@ -120,12 +120,11 @@ router.post('/accounts/addArchive', function(req, res){
 })
 
 router.post('/accounts/addFile', function(req, res){  
-    let jsonObjectAddFile = JSON.parse(RSAKeys.decrypt(req.body.dataFile));
+    let jsonObjectAddFile = JSON.parse(RSAKeys.decrypt(req.body.dataFile).replace(/\[+/g, '').replace(/\]+/g, ''));
     let filePassword = "N/A";
     let name = jsonObjectAddFile.name;
     let description = "N/A";
     let dateNow = new Date().toISOString().slice(0, 19).replace('T', ' '); // Convert Date format to MySQL Datetime format
-    console.log(filePassword + "\n" + name + "\n" + description + "\n" + dateNow);
     Files.upsert({
         name: name,
         password: filePassword,
