@@ -11,9 +11,7 @@ var jwt = require('jsonwebtoken');
 
 // route de connexion
 router.post('/login', function(req, res){
-    let decryptor = new RSAKeys();
-    decryptor.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
-    let jsonObjectLogin = JSON.parse(decryptor.decrypt(req.body.credentials));
+    let jsonObjectLogin = JSON.parse(RSAKeys.decrypt(req.body.credentials));
     Accounts.find({
         where : {
             mail: jsonObjectLogin.email,
@@ -21,13 +19,13 @@ router.post('/login', function(req, res){
     }).then(function(result){
         if(result){
             if(result.password){
-                if(decryptor.decrypt(result.password) != jsonObjectLogin.password){
+                if(RSAKeys.decrypt(result.password) != jsonObjectLogin.password){
                     res.json({
                         success: "false",
                         message: "Error while authenticating. Maybe wrong credentials."
                     })
                 } else {
-                    let token = createToken(decryptor.getPrivateKeyDer(), result.id);
+                    let token = createToken(RSAKeys.getPrivateKeyDer(), result.id);
                     let user = JSON.stringify({
                         id: result.id,
                         fname: result.fname,
@@ -53,14 +51,12 @@ router.post('/login', function(req, res){
 
 // ajout d'un compte
 router.post('/addAccount', function(req, res){
-    let rsaKey = new RSAKeys();
-    rsaKey.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
-    let jsonObjectAddAccount = JSON.parse(rsaKey.decrypt(req.body.dataUser));
+    let jsonObjectAddAccount = JSON.parse(RSAKeys.decrypt(req.body.dataUser));
     
     let fname = jsonObjectAddAccount.fname;
     let lname = jsonObjectAddAccount.lname;
     let mail = jsonObjectAddAccount.mail;
-    let password = rsaKey.encrypt(jsonObjectAddAccount.password)
+    let password = RSAKeys.encrypt(jsonObjectAddAccount.password)
     let dateNow = new Date().getTime();
     Accounts.upsert({
         fname: fname,
@@ -89,9 +85,7 @@ router.post('/addAccount', function(req, res){
  * Delete an account via its email
  */
 router.post("/deleteAccount", function (req, res) {
-    let rsaKey = new RSAKeys();
-    rsaKey.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
-    let jsonObjectDeleteAccount = JSON.parse(rsaKey.decrypt(req.body.dataUser));
+    let jsonObjectDeleteAccount = JSON.parse(RSAKeys.decrypt(req.body.dataUser));
     let email = jsonObjectDeleteAccount.mail
     Accounts.destroy({
         where:

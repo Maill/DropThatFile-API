@@ -16,7 +16,7 @@ router.post('/getFilesOfUser', function(req, res){
     Accounts.findAll({
         attributes: [],
         where : {
-            id: jwt.verify(req.get('Authorization'), new RSAKeys().getPrivateKeyDer()).identityUser
+            id: jwt.verify(req.get('Authorization'), RSAKeys.getPrivateKeyDer()).identityUser
         },
         include : [{
             model: Files,
@@ -38,12 +38,10 @@ router.post('/getFilesOfUser', function(req, res){
 
 // Récupération des données des fichiers du groupe
 router.post('/getFilesOfGroups', function(req, res){
-    let rsaKeys = new RSAKeys();
-    rsaKeys.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
     Groups.findAll({
         attributes: ['id'],
         where : {
-            id: JSON.parse(rsaKeys.decrypt(req.body.groupsList))
+            id: JSON.parse(RSAKeys.decrypt(req.body.groupsList))
         },
         include : [{
             model: Files,
@@ -64,15 +62,10 @@ router.post('/getFilesOfGroups', function(req, res){
 })
 
 router.post('/accounts/addArchive', function(req, res){
-    let decryptor = new RSAKeys();
-    decryptor.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
-    let jsonObjectAddFile = JSON.parse(decryptor.decrypt(req.body.dataFile).replace(/\[+/g, '').replace(/\]+/g, ''));
-    console.log(jsonObjectAddFile);
+    let jsonObjectAddFile = JSON.parse(RSAKeys.decrypt(req.body.dataFile).replace(/\[+/g, '').replace(/\]+/g, ''));
     let filePassword = req.body.passwordFile;
     let name = jsonObjectAddFile.name;
-    console.log(name);
     let description = jsonObjectAddFile.description;
-    console.log(description);
     let dateNow = new Date().toISOString().slice(0, 19).replace('T', ' '); // Convert Date format to MySQL Datetime format
     Files.upsert({
         name: name,
@@ -90,7 +83,7 @@ router.post('/accounts/addArchive', function(req, res){
         }).then(function(insertedFileId){
             let jsonObjectInsertedFileId = JSON.stringify(insertedFileId);
             return FilesOfAccount.upsert({
-                id_account: jwt.verify(req.get('Authorization'), new RSAKeys().getPrivateKeyDer()).identityUser,
+                id_account: jwt.verify(req.get('Authorization'), RSAKeys.getPrivateKeyDer()).identityUser,
                 id_files: JSON.parse(jsonObjectInsertedFileId).id
             }).then(function (result) {
                 return res.json({
@@ -126,11 +119,8 @@ router.post('/accounts/addArchive', function(req, res){
     });
 })
 
-router.post('/accounts/addFile', function(req, res){
-    let decryptor = new RSAKeys();
-    decryptor.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
-    
-    let jsonObjectAddFile = JSON.parse(decryptor.decrypt(req.body.dataFile));
+router.post('/accounts/addFile', function(req, res){  
+    let jsonObjectAddFile = JSON.parse(RSAKeys.decrypt(req.body.dataFile));
     let filePassword = "N/A";
     let name = jsonObjectAddFile.name;
     let description = "N/A";
@@ -152,7 +142,7 @@ router.post('/accounts/addFile', function(req, res){
         }).then(function(insertedFileId){
             let jsonObjectInsertedFileId = JSON.stringify(insertedFileId);
             return FilesOfAccount.upsert({
-                id_account: jwt.verify(req.get('Authorization'), new RSAKeys().getPrivateKeyDer()).identityUser,
+                id_account: jwt.verify(req.get('Authorization'), RSAKeys.getPrivateKeyDer()).identityUser,
                 id_files: JSON.parse(jsonObjectInsertedFileId).id
             }).then(function (result) {
                 return res.json({
@@ -188,12 +178,9 @@ router.post('/accounts/addFile', function(req, res){
     });
 })
 
-router.post('/groups/addArchive', function(req, res){
-    let decryptor = new RSAKeys();
-    decryptor.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
-    
-    let jsonObjectAddFile = JSON.parse(decryptor.decrypt(req.body.dataFile));
-    let jsonObjectGroupName = JSON.parse(decryptor.decrypt(req.body.dataGroup));
+router.post('/groups/addArchive', function(req, res){ 
+    let jsonObjectAddFile = JSON.parse(RSAKeys.decrypt(req.body.dataFile));
+    let jsonObjectGroupName = JSON.parse(RSAKeys.decrypt(req.body.dataGroup));
     let filePassword = req.body.passwordFile;
     let fileName = jsonObjectAddFile.name;
     let description = jsonObjectAddFile.description;
@@ -270,12 +257,9 @@ router.post('/groups/addArchive', function(req, res){
     });
 })
 
-router.post('/groups/addFile', function(req, res){
-    let decryptor = new RSAKeys();
-    decryptor.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
-    
-    let jsonObjectAddFile = JSON.parse(decryptor.decrypt(req.body.dataFile));
-    let jsonObjectGroupName = JSON.parse(decryptor.decrypt(req.body.dataGroup));
+router.post('/groups/addFile', function(req, res){    
+    let jsonObjectAddFile = JSON.parse(RSAKeys.decrypt(req.body.dataFile));
+    let jsonObjectGroupName = JSON.parse(RSAKeys.decrypt(req.body.dataGroup));
     let filePassword = "N/A";
     let fileName = jsonObjectAddFile.name;
     let description = jsonObjectAddFile.description;
@@ -356,9 +340,7 @@ router.post('/groups/addFile', function(req, res){
  * Delete a file via its id
  */
 router.post("/deleteFile", function (req, res) {
-    let rsaKey = new RSAKeys();
-    rsaKey.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
-    let jsonObjectDeleteFile = JSON.parse(rsaKey.decrypt(req.body.dataFile));
+    let jsonObjectDeleteFile = JSON.parse(RSAKeys.decrypt(req.body.dataFile));
 
     let name = jsonObjectDeleteFile.name;
     let description = jsonObjectDeleteFile.description;

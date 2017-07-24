@@ -15,7 +15,7 @@ router.post('/getUserGroups', function(req, res){
     Accounts.findAll({
         attributes: [],
         where : {
-            id: jwt.verify(req.get('Authorization'), new RSAKeys().getPrivateKeyDer()).identityUser
+            id: jwt.verify(req.get('Authorization'), RSAKeys.getPrivateKeyDer()).identityUser
         },
         include : [{
             model: Groups,
@@ -40,7 +40,7 @@ router.post('/getPasswordForFile', function(req, res){
     Groups.findAll({
         attributes: ['id'],
         where : {
-            id: JSON.parse(decryptor.decrypt(req.body.GroupsList))
+            id: JSON.parse(RSAKeys.decrypt(req.body.GroupsList))
         },
         include : [{
             model: Files,
@@ -63,11 +63,9 @@ router.post('/getPasswordForFile', function(req, res){
 // Crée un groupe
 router.post('/addGroup', function(req, res){
     let keys = new NodeRSA({b: 2048});
-    let rsaKey = new RSAKeys();
     keys.generateKeyPair();
     keys.setOptions({encryptionScheme: 'pkcs1'});
-    rsaKey.RSAObject.setOptions({encryptionScheme: 'pkcs1'});    
-    let jsonObjectAddGroup = JSON.parse(rsaKey.decrypt(req.body.dataGroup));
+    let jsonObjectAddGroup = JSON.parse(RSAKeys.decrypt(req.body.dataGroup));
         
     let name = jsonObjectAddGroup.name;
     let privateKey = keys.exportKey('private').replace(/-----BEGIN RSA PRIVATE KEY-----/, '').replace(/-----END RSA PRIVATE KEY-----/, '').replace(/\n/g, '');
@@ -99,9 +97,7 @@ router.post('/addGroup', function(req, res){
  * Delete a group via its name (unique)
  */
 router.post("/deleteGroup", function (req, res) {
-    let rsaKey = new RSAKeys();
-    rsaKey.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
-    let jsonObjectDeleteGroup = JSON.parse(rsaKey.decrypt(req.body.dataGroup));
+    let jsonObjectDeleteGroup = JSON.parse(RSAKeys.decrypt(req.body.dataGroup));
     let name = jsonObjectDeleteGroup.name
     Groups.destroy({
         where:

@@ -42,8 +42,8 @@ Groups.belongsToMany(Files, {
 });
 
 //Objets
-var RSAOperation = new RSAKeys();
-RSAOperation.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
+//var RSAOperation = new RSAKeys();
+//RSAOperation.RSAObject.setOptions({encryptionScheme: 'pkcs1'});
 
 //MiddleWares
 app.set('json spaces', 3);
@@ -58,7 +58,7 @@ var groups = require('./routes/groups');
 var configuration = require('./routes/configuration');
 
 //MiddleWare token verification
-app.use(function (req, res, next) {
+/*app.use(function (req, res, next) {
   if (req.path.includes('configuration')) {
     next();
   } else if(req.path.includes('accounts/login')) {
@@ -77,7 +77,7 @@ app.use(function (req, res, next) {
       }, null, 3);
     }
   }
-});
+});*/
 
 app.use('/accounts', accounts);
 app.use('/files', files);
